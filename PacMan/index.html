@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pacman Demo</title>
+    <style type='text/css'>
+        body {
+            background-color: rgb(2, 2, 2);
+            margin: 0px;
+        }
+        
+        h3 {
+            color: white;
+        }
+        
+        div.row div {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+        
+        div.brick {
+            background-color: blue;
+        }
+        
+        div.coin {
+            background: url('coin.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        
+        div.cherries {
+            background: url('cherries.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        
+        div.empty {}
+        
+        div.garden {
+            background-color: rgb(59, 150, 41);
+            border-radius: 5px;
+        }
+        
+        div#pacman {
+            background: url('pacman.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+        
+        div#score {
+            border: 1px solid white;
+            width: 30px;
+            height: 20px;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: absolute;
+            top: 10px;
+            left: 100px;
+            display: inline-block;
+        }
+        
+        div#vidas {
+            position: absolute;
+            text-indent: 0px;
+        }
+        
+        div.ghost {
+            background: url('ghost.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 35px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        div#world {
+            display: inline-block;
+        }
+        
+        div#lifes {
+            background: url('pacman.gif');
+            background-repeat: repeat;
+            background-position: center;
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id='container'>
+        <div id='world'></div>
+        <div id='pacman'></div>
+
+        <div id="vidas">
+
+            <h3>Puntaje:</h3>
+            <div id='score'>0</div>
+
+        </div>
+        <div>
+
+            <br><br>
+            <h3>Vidas:</h3>
+            <div id='lifes' style="left: 0px;"></div>
+            <div id='lifes' style="left: 30px;"></div>
+            <div id='lifes' style="left: 60px;"></div>
+            <div id='lifes' style="left: 90px;"></div>
+
+        </div>
+
+    </div>
+
+
+    List of features to build 1) Have JS display the world of brick/coins/etc. 2) Have the pacman move up and down
+
+    <script>
+        var world = [
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 0, 1, 2, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 2, 1, 2, 2, 2, 1, 2],
+            [2, 1, 1, 2, 1, 2, 1, 2, 1, 2],
+            [2, 1, 1, 2, 1, 2, 1, 2, 1, 2],
+            [2, 1, 1, 2, 2, 2, 1, 2, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        ];
+
+        var score = 0;
+        var scorePremio = 0;
+
+        var pacman = {
+            x: 1,
+            y: 1
+        }
+
+        function displayWorld() {
+            var output = '';
+
+            for (var i = 0; i < world.length; i++) {
+                output += "\n<div class='row' style='height: 20px;'>\n";
+                for (var j = 0; j < world[i].length; j++) {
+
+                    if (world[i][j] == 5)
+                        output += "<div class='garden'></div>";
+
+                    if (world[i][j] == 4)
+                        output += "<div class='ghost'></div>";
+                    else if (world[i][j] == 3)
+                        output += "<div class='cherries'></div>";
+                    else if (world[i][j] == 2)
+                        output += "<div class='brick'></div>";
+                    else if (world[i][j] == 1)
+                        output += "<div class='coin'></div>";
+                    if (world[i][j] == 0)
+                        output += "<div class='empty'></div>";
+
+
+
+
+
+
+
+
+
+                }
+                output += "\n</div>";
+            }
+            document.getElementById('world').innerHTML = output;
+        }
+
+        function displayScore() {
+            document.getElementById('score').innerHTML = score
+        }
+
+        function displayPacman() {
+            document.getElementById('pacman').style.top = pacman.y * 20 + "px";
+            document.getElementById('pacman').style.left = pacman.x * 20 + "px";
+        }
+
+        displayWorld();
+        displayPacman();
+
+        /* Función que captura eventos de teclado */
+        document.onkeydown = function(e) {
+            if (e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2) {
+                pacman.x--;
+                rotateImage(180);
+            } else if (e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2) {
+                pacman.x++;
+                rotateImage(360);
+            } else if (e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2) {
+                pacman.y--;
+                rotateImage(270);
+            } else if (e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2) {
+                pacman.y++;
+                rotateImage(90)
+            }
+
+            //Validación que permite identificar si
+            //se cruzó con una moneda y sumar al score
+            if (world[pacman.y][pacman.x] == 1 || world[pacman.y][pacman.x] == 3) {
+                world[pacman.y][pacman.x] = 0;
+                score += 10;
+
+
+                if ((score - scorePremio) == 100 || (score - scorePremio) == 0) {
+                    scorePremio = score;
+                    world[pacman.y][pacman.x] = 3;
+                }
+
+
+                if (score == 430) {
+                    alert("Felicidades, pasaste al siguiente nivel !!!");
+
+
+                    for (var i = 0; i < world.length; i++) {
+                        for (var j = 0; j < world[i].length; j++) {
+                            if (world[i][j] == 1) {
+                                world[i][j] = 2;
+                            }
+                        }
+                    }
+                    world = [
+
+                        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+                        [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                        [2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 2],
+                        [2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+                        [2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2],
+                        [2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 2, 2, 2],
+                        [2, 1, 1, 1, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 0, 1, 5, 1, 5, 1, 1, 1, 5, 1, 5, 5, 5, 5, 5, 1, 1, 1, 1, 2],
+                        [2, 1, 2, 2, 1, 5, 0, 0, 0, 0, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 5, 1, 5, 5, 1, 1, 5, 1, 5, 0, 0, 0, 0, 1, 2, 2, 1, 2],
+                        [2, 1, 1, 2, 1, 5, 0, 1, 1, 0, 1, 5, 0, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 5, 1, 5, 0, 5, 1, 5, 1, 5, 0, 1, 0, 0, 1, 2, 1, 1, 2],
+                        [2, 1, 1, 2, 1, 5, 0, 1, 1, 0, 1, 5, 0, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 5, 1, 5, 1, 5, 0, 5, 1, 5, 0, 1, 0, 5, 1, 2, 1, 1, 2],
+                        [2, 1, 2, 2, 1, 5, 0, 0, 0, 0, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 5, 1, 5, 1, 1, 5, 5, 1, 5, 0, 0, 0, 5, 1, 2, 2, 1, 2],
+                        [2, 1, 1, 1, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 0, 1, 5, 1, 5, 1, 1, 1, 5, 1, 5, 5, 5, 5, 5, 1, 1, 1, 1, 2],
+                        [2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+                        [2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 5, 5, 5, 5, 1, 1, 5, 5, 5, 5, 5, 1, 0, 0, 5, 5, 5, 1, 5, 5, 5, 5, 5, 1, 2, 2, 2, 1, 2, 1, 2],
+                        [2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 0, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 2, 1, 1, 1, 1, 1, 2],
+                        [2, 1, 2, 2, 2, 2, 2, 1, 1, 1, 5, 0, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 0, 1, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 1, 1, 2, 2, 2, 2, 2],
+                        [2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 5, 0, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 0, 1, 1, 0, 5, 1, 5, 0, 1, 0, 5, 1, 2, 1, 2, 1, 1, 1, 2],
+                        [2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 5, 0, 0, 0, 5, 1, 2, 1, 1, 1, 2, 1, 2],
+                        [2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 5, 5, 5, 5, 1, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5, 5, 1, 2, 2, 2, 2, 2, 1, 2],
+                        [2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2],
+                        [2, 1, 2, 1, 4, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 4, 1, 2, 1, 2],
+                        [2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2],
+                        [2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2],
+                        [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+
+                    ];
+                    world[5][3] = 4;
+                }
+                displayWorld();
+                displayScore();
+
+            }
+
+
+            displayPacman();
+        }
+
+        function rotateImage(grades) {
+            var img = document.getElementById('pacman');
+            img.style.transform = 'rotate(${grades}deg)';
+        }
+    </script>
+</body>
+
+</html>
